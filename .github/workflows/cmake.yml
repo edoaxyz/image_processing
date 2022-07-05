@@ -34,7 +34,7 @@ jobs:
       run: ./tests/tests_run
       
     - name: Setup Coverage
-      run: apt install lcov
+      run: sudo apt install lcov
       
     - name: Run Coverage
       working-directory: ${{github.workspace}}
