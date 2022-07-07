@@ -39,6 +39,6 @@ private:
     }
 
 
-}
+};
 
 #endif //IMAGE_PROCESSING_IMAGEPROCESSING_H
