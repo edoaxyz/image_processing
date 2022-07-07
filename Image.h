@@ -48,6 +48,13 @@ public:
         return data[y * width + x + getOffsetChannel(channel)];
     }
 
+    unsigned int getWidth() const {
+        return width;
+    }
+
+    unsigned int getHeight() const {
+        return height;
+    }
 
 private:
     void validateArguments(const unsigned int x = 0, const unsigned int y = 0, const unsigned int channel = 0) const {

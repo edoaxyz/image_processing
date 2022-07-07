@@ -2,7 +2,7 @@
 // Created by edo on 05/07/22.
 //
 #include "gtest/gtest.h"
-#include "Image.h"
+#include "../Image.h"
 
 TEST(Image, TestCorrectInitialization) {
     Image<1> image(300, 400, 1);
