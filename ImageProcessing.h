@@ -26,13 +26,13 @@ public:
 private:
 
     static void convolute(Image<channels, T> &image, const std::vector<std::vector<float>> &kernel) {
-        for (int i = 0; i < channels, i++) {
+        for (int i = 0; i < channels; i++) {
             for (int y = kernel.size() / 2; y < image.getHeight() - (kernel.size() / 2); y++) {
                 //for (int x = kernel.size() / 2;)
             }
             for (auto &row: kernel) {
                 for (auto &col: row) {
-                    image.get()
+                    //image.get()
                 }
             }
         }
