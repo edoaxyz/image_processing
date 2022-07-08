@@ -32,15 +32,15 @@ TEST(Image, TestValidation) {
 
     EXPECT_THROW({
                      image.set(500, 200, 0, 20);
-                 }, WrongArgumentsException);
+                 }, WrongArgumentsImageException);
 
     EXPECT_THROW({
                      image.set(200, 500, 0, 20);
-                 }, WrongArgumentsException);
+                 }, WrongArgumentsImageException);
 
     EXPECT_THROW({
                      image.set(200, 500, 4, 20);
-                 }, WrongArgumentsException);
+                 }, WrongArgumentsImageException);
 }
 
 TEST(Image, TestGrayScale) {

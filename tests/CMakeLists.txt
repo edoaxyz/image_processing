@@ -13,6 +13,6 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-set(SOURCE_FILES runAllTests.cpp ImageTest.cpp KernelTest.cpp)
+set(SOURCE_FILES runAllTests.cpp ImageTest.cpp KernelTest.cpp ImageProcessingTest.cpp)
 add_executable(tests_run ${SOURCE_FILES})
 target_link_libraries(tests_run gtest gtest_main)

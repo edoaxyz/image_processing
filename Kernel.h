@@ -15,6 +15,13 @@ public:
     virtual ~WrongSizeKernelException() {};
 };
 
+class OutOfRangeKernelException : public std::out_of_range {
+public:
+    OutOfRangeKernelException() : std::out_of_range("Wrong X,Y matrix coordinates") {};
+
+    virtual ~OutOfRangeKernelException() {};
+};
+
 class Kernel {
 public:
     explicit Kernel(std::initializer_list<float> list);
@@ -31,6 +38,7 @@ public:
 
 protected:
     std::vector<float> values;
+    int matrixSize;
 };
 
 class IdentityKernel : public Kernel {

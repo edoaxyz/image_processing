@@ -23,6 +23,14 @@ TEST(Kernel, TestGet) {
 
     ASSERT_EQ(5, k.getValue(1, 1));
     ASSERT_EQ(5, k.getCenteredValue(0, 0));
+
+    EXPECT_THROW({
+                     k.getValue(10, 10);
+                 }, OutOfRangeKernelException);
+
+    EXPECT_THROW({
+                     k.getCenteredValue(-10, -10);
+                 }, OutOfRangeKernelException);
 }
 
 TEST(Kernel, TestGaussBlur) {
