@@ -42,3 +42,12 @@ TEST(Image, TestValidation) {
                      image.set(200, 500, 4, 20);
                  }, WrongArgumentsException);
 }
+
+TEST(Image, TestGrayScale) {
+    Image<3> image(200, 400, 0);
+    image.set(100, 200, 1, 255);
+    image.set(100, 200, 2, 255);
+
+    auto grayscale = image.getGrayScale();
+    ASSERT_EQ(170, grayscale->get(100, 200, 0));
+}

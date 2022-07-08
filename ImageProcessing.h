@@ -9,6 +9,7 @@
 #include <string>
 #include <stdexcept>
 #include "Image.h"
+#include "Kernel.h"
 
 class ImageProcessingException : public std::exception {
 public:
@@ -25,8 +26,8 @@ public:
 
 private:
 
-    static void convolute(Image<channels, T> &image, const std::vector<std::vector<float>> &kernel) {
-        for (int i = 0; i < channels; i++) {
+    static void convolute(Image<channels, T> &image, Kernel &kernel) {
+        /*for (int i = 0; i < channels; i++) {
             for (int y = kernel.size() / 2; y < image.getHeight() - (kernel.size() / 2); y++) {
                 //for (int x = kernel.size() / 2;)
             }
@@ -35,7 +36,7 @@ private:
                     //image.get()
                 }
             }
-        }
+        }*/
     }
 
 

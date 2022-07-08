@@ -40,12 +40,12 @@ public:
 
     void set(const unsigned int x, const unsigned int y, const unsigned int channel, const T value) {
         validateArguments(x, y, channel);
-        data[y * width + x + getOffsetChannel(channel)] = value;
+        data[y * width + x + getChannelOffset(channel)] = value;
     }
 
     const T get(const unsigned int x, const unsigned int y, const unsigned int channel) const {
         validateArguments(x, y, channel);
-        return data[y * width + x + getOffsetChannel(channel)];
+        return data[y * width + x + getChannelOffset(channel)];
     }
 
     unsigned int getWidth() const {
@@ -55,6 +55,26 @@ public:
     unsigned int getHeight() const {
         return height;
     }
+
+    std::unique_ptr<Image<1, T>> getGrayScale() const {
+        auto ptr = std::make_unique<Image<1, T>>(width, height);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                double sum = 0;
+                for (int c = 0; c < channels; c++) {
+                    sum += data[y * width + x + getChannelOffset(c)];
+                }
+                ptr->set(x, y, 0, sum / channels);
+            }
+        }
+        return ptr;
+    }
+
+protected:
+    unsigned int width;
+    unsigned int height;
+    std::unique_ptr<T[]> data;
 
 private:
     void validateArguments(const unsigned int x = 0, const unsigned int y = 0, const unsigned int channel = 0) const {
@@ -71,15 +91,10 @@ private:
                     std::to_string(height));
     }
 
-    int getOffsetChannel(unsigned int channel) const {
+    int getChannelOffset(unsigned int channel) const {
         validateArguments(0, 0, channel);
         return (width * height * channel);
     }
-
-    unsigned int width;
-    unsigned int height;
-    std::unique_ptr<T[]> data;
-
 };
 
 
