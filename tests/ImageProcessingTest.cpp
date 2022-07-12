@@ -4,12 +4,11 @@
 
 #include "gtest/gtest.h"
 #include "../Image.h"
-#include "../ImageProcessing.h"
 
-TEST(ImageProcessing, TestIdentityKernel) {
-    RGBAImage image(200, 200);
+TEST(Image, TestIdentityKernel) {
+    Image<4> image(200, 200);
     image.set(100, 100, 3, 255);
     IdentityKernel identityKernel;
-    RGBAImgProcessing::applyKernel(image, identityKernel);
+    image.applyKernel(identityKernel);
     ASSERT_EQ(255, image.get(100, 100, 3));
 }

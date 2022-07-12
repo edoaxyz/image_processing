@@ -28,7 +28,7 @@ public:
 
     explicit Kernel(int dimension, float initValue = 1);
 
-    virtual ~Kernel() {};
+    virtual ~Kernel() = default;
 
     int getMatrixSize() const;
 
@@ -88,7 +88,7 @@ public:
 
 class GaussBlurKernel : public Kernel {
 public:
-    GaussBlurKernel(const float stdDev, int dimension = 3);
+    explicit GaussBlurKernel(float stdDev, int dimension = 3);
 
     virtual ~GaussBlurKernel() {};
 };

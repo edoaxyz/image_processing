@@ -9,6 +9,8 @@
 #include <memory>
 #include <string>
 #include <stdexcept>
+#include <limits>
+#include "Kernel.h"
 
 class ImageException : public std::exception {
 public:
@@ -39,33 +41,32 @@ public:
             data[i] = copy.data[i];
     }
 
-    Image<channels, T> &operator=(Image<channels, T> &copy) {
+    virtual Image<channels, T> &operator=(Image<channels, T> &copy) {
         width = copy.width;
         height = copy.height;
-        data = std::make_unique<T[]>(width * height * channels);
-        for (int i = 0; i < width * height * channels; i++)
-            data[i] = copy.data[i];
+        data = std::move(copy.data);
+        return *this;
     }
 
-    void set(const unsigned int x, const unsigned int y, const unsigned int channel, const T value) {
+    virtual void set(const unsigned int x, const unsigned int y, const unsigned int channel, const T value) {
         validateArguments(x, y, channel);
         data[y * width + x + getChannelOffset(channel)] = value;
     }
 
-    const T get(const unsigned int x, const unsigned int y, const unsigned int channel) const {
+    virtual const T get(const unsigned int x, const unsigned int y, const unsigned int channel) const {
         validateArguments(x, y, channel);
         return data[y * width + x + getChannelOffset(channel)];
     }
 
-    unsigned int getWidth() const {
+    virtual unsigned int getWidth() const {
         return width;
     }
 
-    unsigned int getHeight() const {
+    virtual unsigned int getHeight() const {
         return height;
     }
 
-    std::unique_ptr<Image<1, T>> getGrayScale() const {
+    virtual std::unique_ptr<Image<1, T>> getGrayScale() const {
         auto ptr = std::make_unique<Image<1, T>>(width, height);
 
         for (int y = 0; y < height; y++) {
@@ -80,13 +81,48 @@ public:
         return ptr;
     }
 
+    virtual std::unique_ptr<Image<1, T>> extractChannel(int channel) const {
+        auto ptr = std::make_unique<Image<1, T>>(width, height);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                ptr->set(x, y, 0, get(x, y, channel));
+            }
+        }
+        return ptr;
+    }
+
+    virtual void applyKernel(const Kernel &kernel) {
+        for (int i = 0; i < channels; i++) {
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    // convolute
+                    double sum = 0;
+                    for (int kernelX = -kernel.getMatrixSize() / 2; kernelX < kernel.getMatrixSize() / 2; kernelX++) {
+                        for (int kernelY = -kernel.getMatrixSize() / 2;
+                             kernelY < kernel.getMatrixSize() / 2; kernelY++) {
+                            try {
+                                sum += kernel.getCenteredValue(kernelX, kernelY) *
+                                       get(x - kernelX, y - kernelY, i);
+                            } catch (WrongArgumentsImageException &exception) {}
+                        }
+                    }
+                    sum = std::min(std::max(sum, double(std::numeric_limits<T>::min())),
+                                   double(std::numeric_limits<T>::max()));
+                    set(x, y, i, sum);
+                }
+            }
+        }
+    }
+
 protected:
     unsigned int width;
     unsigned int height;
-    std::unique_ptr<T[]> data;
 
+    std::unique_ptr<T[]> data;
 private:
-    void validateArguments(const unsigned int x = 0, const unsigned int y = 0, const unsigned int channel = 0) const {
+    virtual void
+    validateArguments(const unsigned int x = 0, const unsigned int y = 0, const unsigned int channel = 0) const {
         if (channel >= channels || channel < 0)
             throw WrongArgumentsImageException("Passed wrong channel parameter: passed " + std::to_string(channel) +
                                                ", expected value >= 0 and < " + std::to_string(channels));
@@ -100,26 +136,10 @@ private:
                     std::to_string(height));
     }
 
-    int getChannelOffset(unsigned int channel) const {
+    virtual int getChannelOffset(unsigned int channel) const {
         validateArguments(0, 0, channel);
         return (width * height * channel);
     }
-};
-
-class GImage : public Image<1> {  // Grayscale
-    using Image<1>::Image;
-};
-
-class GAImage : public Image<2> { // Grayscale + Alpha
-    using Image<2>::Image;
-};
-
-class RGBImage : public Image<3> { // RGB
-    using Image<3>::Image;
-};
-
-class RGBAImage : public Image<4> { // RGB + Alpha
-    using Image<4>::Image;
 };
 
 #endif //IMAGE_PROCESSING_IMAGE_H

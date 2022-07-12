@@ -11,8 +11,12 @@ add_executable(image_processing
         main.cpp
         Image.cpp
         Image.h
-        ImageProcessing.cpp
-        ImageProcessing.h
         Kernel.cpp
         Kernel.h
+        PGMManager.cpp
+        PGMManager.h
+        PPMManager.cpp
+        PPMManager.h
+        PXXManager.cpp
+        PXXManager.h
         )
