@@ -9,7 +9,7 @@
 #include "../PPMManager.h"
 
 TEST(PPMManager, TestReadImage) {
-    auto image = PPMManager::readPPM("../../tests/assets/ppm/test.ppm");
+    auto image = PPMManager::readPPM("assets/ppm/test.ppm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(255, image->get(0, 0, 1));
     ASSERT_EQ(255, image->get(0, 0, 2));
@@ -31,7 +31,7 @@ TEST(PPMManager, TestReadImage) {
 }
 
 TEST(PPMManager, TestReadImageWithAlpha) {
-    auto image = PPMManager::readPPM("../../tests/assets/ppm/test.ppm", "../../tests/assets/ppm/test-alpha.pgm");
+    auto image = PPMManager::readPPM("assets/ppm/test.ppm", "assets/ppm/test-alpha.pgm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(255, image->get(0, 0, 1));
     ASSERT_EQ(255, image->get(0, 0, 2));
@@ -91,18 +91,18 @@ TEST(PPMManager, TestWriteImageWithAlpha) {
 
 TEST(PPMManager, TestFake) {
     ASSERT_ANY_THROW({
-                         PPMManager::readPPM("../../tests/assets/ppm/fake.ppm");
+                         PPMManager::readPPM("assets/ppm/fake.ppm");
                      });
 }
 
 TEST(PPMManager, TestUnsupportedMagic) {
     ASSERT_THROW({
                      try {
-                         PPMManager::readPPM("../../tests/assets/ppm/unsupported-magic.ppm");
+                         PPMManager::readPPM("assets/ppm/unsupported-magic.ppm");
                      }
                      catch (const PPMReadException &e) {
                          EXPECT_STREQ(
-                                 "Cannot match magic number in ../../tests/assets/ppm/unsupported-magic.ppm. Magic number found: P3",
+                                 "Cannot match magic number in assets/ppm/unsupported-magic.ppm. Magic number found: P3",
                                  e.what());
                          throw;
                      }

@@ -5,7 +5,7 @@
 #include "../PGMManager.h"
 
 TEST(PGMManager, TestReadMonocromeImage) {
-    auto image = PGMManager::readPGM("../../tests/assets/pgm/test.pgm");
+    auto image = PGMManager::readPGM("assets/pgm/test.pgm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(216, image->get(0, 1, 0));
     ASSERT_EQ(145, image->get(1, 0, 0));
@@ -15,7 +15,7 @@ TEST(PGMManager, TestReadMonocromeImage) {
 }
 
 TEST(PGMManager, TestReadImageWithAlpha) {
-    auto image = PGMManager::readPGM("../../tests/assets/pgm/test.pgm", "../../tests/assets/pgm/test-alpha.pgm");
+    auto image = PGMManager::readPGM("assets/pgm/test.pgm", "assets/pgm/test-alpha.pgm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(216, image->get(0, 1, 0));
     ASSERT_EQ(145, image->get(1, 0, 0));
@@ -62,18 +62,18 @@ TEST(PGMManager, TestWriteImageWithAlpha) {
 
 TEST(PGMManager, TestFake) {
     ASSERT_ANY_THROW({
-                         PGMManager::readPGM("../../tests/assets/pgm/fake.pgm");
+                         PGMManager::readPGM("assets/pgm/fake.pgm");
                      });
 }
 
 TEST(PGMManager, TestUnsupportedMagic) {
     ASSERT_THROW({
                      try {
-                         PGMManager::readPGM("../../tests/assets/pgm/unsupported-magic.pgm");
+                         PGMManager::readPGM("assets/pgm/unsupported-magic.pgm");
                      }
                      catch (const PGMReadException &e) {
                          EXPECT_STREQ(
-                                 "Cannot match magic number in ../../tests/assets/pgm/unsupported-magic.pgm. Magic number found: P2",
+                                 "Cannot match magic number in assets/pgm/unsupported-magic.pgm. Magic number found: P2",
                                  e.what());
                          throw;
                      }
@@ -83,11 +83,11 @@ TEST(PGMManager, TestUnsupportedMagic) {
 TEST(PGMManager, TestUnsupportedMaxVal) {
     ASSERT_THROW({
                      try {
-                         PGMManager::readPGM("../../tests/assets/pgm/unsupported-maxval.pgm");
+                         PGMManager::readPGM("assets/pgm/unsupported-maxval.pgm");
                      }
                      catch (const PGMReadException &e) {
                          EXPECT_STREQ(
-                                 "Unsupported PGM MaxVal in ../../tests/assets/pgm/unsupported-maxval.pgm. MaxVal found: 65535",
+                                 "Unsupported PGM MaxVal in assets/pgm/unsupported-maxval.pgm. MaxVal found: 65535",
                                  e.what());
                          throw;
                      }
@@ -97,8 +97,7 @@ TEST(PGMManager, TestUnsupportedMaxVal) {
 TEST(PGMManager, TestAlphaImageDifferentDimensions) {
     ASSERT_THROW({
                      try {
-                         PGMManager::readPGM("../../tests/assets/pgm/test.pgm",
-                                             "../../tests/assets/pgm/test-wrong-size-alpha.pgm");
+                         PGMManager::readPGM("assets/pgm/test.pgm", "assets/pgm/test-wrong-size-alpha.pgm");
                      }
                      catch (const PGMReadException &e) {
                          EXPECT_STREQ("Grayscale and Alpha images have different dimensions", e.what());
