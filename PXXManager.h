@@ -10,8 +10,8 @@
 class PXXReader {
 public:
     static void getLine(std::istream &inputStream, std::string &line) {
-        while (!(!line.empty() && line[0] == '#')) {
-            getline(inputStream, line, '\n');
+        while ((line.empty() || (!line.empty() && line[0] == '#')) && !inputStream.eof()) {
+            getline(inputStream, line);
         }
     }
 };

@@ -8,22 +8,23 @@
 
 #include <memory>
 #include <string>
+#include <iostream>
 #include <stdexcept>
 #include <limits>
 #include "Kernel.h"
 
-class ImageException : public std::exception {
+class ImageException {
 public:
-    ImageException() : std::exception() {};
+    ImageException() = default;
 
-    virtual ~ImageException() override {};
+    virtual ~ImageException() = default;
 };
 
 class WrongArgumentsImageException : public ImageException, public std::out_of_range {
 public:
-    WrongArgumentsImageException(const std::string &msg) : std::out_of_range(msg) {};
+    explicit WrongArgumentsImageException(const std::string &msg) : std::out_of_range(msg) {};
 
-    virtual ~WrongArgumentsImageException() override {};
+    ~WrongArgumentsImageException() override {};
 };
 
 template<int channels, typename T = unsigned char>

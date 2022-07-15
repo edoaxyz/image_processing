@@ -7,9 +7,7 @@ add_subdirectory(tests)
 
 include_directories(.)
 
-add_executable(image_processing
-        main.cpp
-        Image.cpp
+set(SOURCE_FILES Image.cpp
         Image.h
         Kernel.cpp
         Kernel.h
@@ -18,5 +16,8 @@ add_executable(image_processing
         PPMManager.cpp
         PPMManager.h
         PXXManager.cpp
-        PXXManager.h
-        )
+        PXXManager.h)
+
+add_library(core ${SOURCE_FILES})
+add_executable(image_processing main.cpp)
+target_link_libraries(image_processing core)

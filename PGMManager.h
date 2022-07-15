@@ -5,29 +5,28 @@
 #ifndef IMAGE_PROCESSING_PGMMANAGER_H
 #define IMAGE_PROCESSING_PGMMANAGER_H
 
-
 #include <memory>
 #include "Image.h"
 
-class PGMException : public std::exception {
+class PGMException {
 public:
-    PGMException() : std::exception() {};
+    PGMException() = default;
 
-    virtual ~PGMException() {};
+    virtual ~PGMException() = default;
 };
 
 class PGMReadException : public PGMException, public std::runtime_error {
 public:
-    PGMReadException(std::string msg) : std::runtime_error(msg) {};
+    explicit PGMReadException(std::string msg) : std::runtime_error(msg) {};
 
-    virtual ~PGMReadException() {};
+    ~PGMReadException() override = default;
 };
 
 class PGMWriteException : public PGMException, public std::runtime_error {
 public:
-    PGMWriteException(std::string msg) : std::runtime_error(msg) {};
+    explicit PGMWriteException(std::string msg) : std::runtime_error(msg) {};
 
-    virtual ~PGMWriteException() {};
+    ~PGMWriteException() override = default;
 };
 
 class PGMManager {

@@ -2,11 +2,11 @@
 // Created by edo on 09/07/22.
 //
 
+
 #include <fstream>
-#include <memory>
-#include "PXXManager.h"
-#include "Image.h"
+#include <iostream>
 #include "PGMManager.h"
+#include "PXXManager.h"
 
 std::unique_ptr<Image<1>> PGMManager::readPGM(const std::string &path) {
     std::ifstream inputFile(path, std::ios::binary);
@@ -16,14 +16,15 @@ std::unique_ptr<Image<1>> PGMManager::readPGM(const std::string &path) {
     header << inputFile;
     if (header.magicNumber != "P5")
         throw PGMReadException(
-                "Cannot match magic number in " + path + " . Magic number found: " + header.magicNumber);
+                "Cannot match magic number in " + path + ". Magic number found: " + header.magicNumber);
     if (header.maxVal != 255)
-        throw PGMReadException("Unsupported PGM MaxVal in " + path + " . MaxVal found" + std::to_string(header.maxVal));
+        throw PGMReadException(
+                "Unsupported PGM MaxVal in " + path + ". MaxVal found: " + std::to_string(header.maxVal));
 
     auto image = std::make_unique<Image<1>>(header.width, header.height);
     for (int y = 0; y < image->getHeight(); y++) {
         for (int x = 0; x < image->getWidth(); x++) {
-            unsigned int val;
+            unsigned char val;
             inputFile >> val;
             image->set(x, y, 0, val);
         }

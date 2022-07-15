@@ -8,25 +8,25 @@
 #include <memory>
 #include "Image.h"
 
-class PPMException : public std::exception {
+class PPMException {
 public:
-    PPMException() : std::exception() {};
+    PPMException() = default;
 
-    virtual ~PPMException() {};
+    virtual ~PPMException() = default;
 };
 
 class PPMReadException : public PPMException, public std::runtime_error {
 public:
     PPMReadException(std::string msg) : std::runtime_error(msg) {};
 
-    virtual ~PPMReadException() {};
+    ~PPMReadException() override = default;
 };
 
 class PPMWriteException : public PPMException, public std::runtime_error {
 public:
     PPMWriteException(std::string msg) : std::runtime_error(msg) {};
 
-    virtual ~PPMWriteException() {};
+    ~PPMWriteException() override = default;
 };
 
 class PPMManager {

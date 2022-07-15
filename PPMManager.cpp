@@ -4,8 +4,8 @@
 
 #include <fstream>
 #include "PPMManager.h"
-#include "PXXManager.h"
 #include "PGMManager.h"
+#include "PXXManager.h"
 
 std::unique_ptr<Image<3>> PPMManager::readPPM(const std::string &path) {
     std::ifstream inputFile(path);
@@ -14,15 +14,16 @@ std::unique_ptr<Image<3>> PPMManager::readPPM(const std::string &path) {
     PXXHeader header;
     header << inputFile;
     if (header.magicNumber != "P6")
-        throw PPMReadException("Magic number not matched in " + path + ". Magic number found: " + header.magicNumber);
+        throw PPMReadException("Cannot match magic number in " + path + ". Magic number found: " + header.magicNumber);
     if (header.maxVal != 255)
-        throw PPMReadException("MaxVal not supported in " + path + ". MaxVal found" + std::to_string(header.maxVal));
+        throw PPMReadException(
+                "Unsupported PPM MaxVal in " + path + ". MaxVal found: " + std::to_string(header.maxVal));
 
     auto image = std::make_unique<Image<3>>(header.width, header.height);
     for (int y = 0; y < image->getHeight(); y++) {
         for (int x = 0; x < image->getWidth(); x++) {
             for (int c = 0; c < 3; c++) {
-                unsigned int val;
+                unsigned char val;
                 inputFile >> val;
                 image->set(x, y, c, val);
             }
@@ -38,7 +39,7 @@ std::unique_ptr<Image<4>> PPMManager::readPPM(const std::string &path, const std
     if (base->getWidth() != alpha->getWidth() || base->getHeight() != alpha->getHeight())
         throw PPMReadException("Grayscale and Alpha images have different dimensions");
 
-    auto final = std::make_unique<Image<4>>(base->getWidth(), base->getWidth());
+    auto final = std::make_unique<Image<4>>(base->getWidth(), base->getHeight());
     for (int y = 0; y < final->getHeight(); y++) {
         for (int x = 0; x < final->getWidth(); x++) {
             final->set(x, y, 0, base->get(x, y, 0));

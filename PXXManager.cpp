@@ -10,7 +10,7 @@ std::istream &PXXHeader::operator<<(std::istream &inputStream) {
     std::string dimensions;
     PXXReader::getLine(inputStream, dimensions);
     width = stoi(dimensions.substr(0, dimensions.find(' ')));
-    height = stoi(dimensions.substr(0, dimensions.find(' ')));
+    height = stoi(dimensions.substr(dimensions.find(' ')));
 
     std::string tempMaxVal;
     PXXReader::getLine(inputStream, tempMaxVal);
