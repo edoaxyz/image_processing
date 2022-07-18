@@ -8,7 +8,7 @@
 #include "PXXManager.h"
 
 std::unique_ptr<Image<3>> PPMManager::readPPM(const std::string &path) {
-    std::ifstream inputFile(path);
+    std::ifstream inputFile(path, std::ios::binary);
     if (!inputFile.is_open()) throw PPMReadException("Cannot open file " + path);
 
     PXXHeader header;
@@ -24,7 +24,7 @@ std::unique_ptr<Image<3>> PPMManager::readPPM(const std::string &path) {
         for (int x = 0; x < image->getWidth(); x++) {
             for (int c = 0; c < 3; c++) {
                 unsigned char val;
-                inputFile >> val;
+                inputFile.read((char *) (&val), sizeof(unsigned char));
                 image->set(x, y, c, val);
             }
         }
@@ -51,7 +51,7 @@ std::unique_ptr<Image<4>> PPMManager::readPPM(const std::string &path, const std
     return final;
 }
 
-void PPMManager::writePGM(const std::string &path, const Image<3> &image) {
+void PPMManager::writePPM(const std::string &path, const Image<3> &image) {
     std::ofstream outputFile(path);
     if (!outputFile.is_open()) throw PGMWriteException("Cannot open file " + path);
 
@@ -68,7 +68,7 @@ void PPMManager::writePGM(const std::string &path, const Image<3> &image) {
     outputFile.close();
 }
 
-void PPMManager::writePGM(const std::string &path, const std::string &alphaPath, const Image<4> &image) {
+void PPMManager::writePPM(const std::string &path, const std::string &alphaPath, const Image<4> &image) {
     auto base = std::make_unique<Image<3>>(image.getWidth(), image.getHeight());
     auto alpha = std::make_unique<Image<1>>(image.getWidth(), image.getHeight());
     for (int y = 0; y < image.getHeight(); y++) {
@@ -79,7 +79,7 @@ void PPMManager::writePGM(const std::string &path, const std::string &alphaPath,
             alpha->set(x, y, 0, image.get(x, y, 3));
         }
     }
-    PPMManager::writePGM(path, *base);
+    PPMManager::writePPM(path, *base);
     PGMManager::writePGM(alphaPath, *alpha);
 }
 

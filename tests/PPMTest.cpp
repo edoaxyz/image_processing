@@ -61,7 +61,7 @@ TEST(PPMManager, TestReadImageWithAlpha) {
 TEST(PPMManager, TestWriteImage) {
     Image<3> image(2, 3, 0);
     image.set(1, 2, 2, 128);
-    PPMManager::writePGM("test.ppm", image);
+    PPMManager::writePPM("test.ppm", image);
     auto output = PPMManager::readPPM("test.ppm");
     ASSERT_EQ(image.getWidth(), output->getWidth());
     ASSERT_EQ(image.getHeight(), output->getHeight());
@@ -76,7 +76,7 @@ TEST(PPMManager, TestWriteImageWithAlpha) {
     Image<4> image(2, 3, 0);
     image.set(1, 2, 2, 128);
     image.set(0, 2, 3, 128);
-    PPMManager::writePGM("test.ppm", "test-alpha.pgm", image);
+    PPMManager::writePPM("test.ppm", "test-alpha.pgm", image);
     auto output = PPMManager::readPPM("test.ppm", "test-alpha.pgm");
     ASSERT_EQ(image.getWidth(), output->getWidth());
     ASSERT_EQ(image.getHeight(), output->getHeight());

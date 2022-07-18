@@ -27,8 +27,22 @@ public:
     ~WrongArgumentsImageException() override {};
 };
 
+template<typename T = unsigned char>
+class AbstractImage {
+public:
+    virtual void set(const unsigned int x, const unsigned int y, const unsigned int channel, const T value) = 0;
+
+    virtual const T get(const unsigned int x, const unsigned int y, const unsigned int channel) const = 0;
+
+    virtual unsigned int getWidth() const = 0;
+
+    virtual unsigned int getHeight() const = 0;
+
+    virtual void applyKernel(const Kernel &kernel) = 0;
+};
+
 template<int channels, typename T = unsigned char>
-class Image {
+class Image : public AbstractImage<T> {
 public:
     Image<channels, T>(const unsigned int width, const unsigned int height, T initValue = 0) : width(width),
                                                                                                height(height) {

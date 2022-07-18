@@ -25,7 +25,7 @@ std::unique_ptr<Image<1>> PGMManager::readPGM(const std::string &path) {
     for (int y = 0; y < image->getHeight(); y++) {
         for (int x = 0; x < image->getWidth(); x++) {
             unsigned char val;
-            inputFile >> val;
+            inputFile.read((char *) (&val), sizeof(unsigned char));
             image->set(x, y, 0, val);
         }
     }

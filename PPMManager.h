@@ -35,9 +35,9 @@ public:
 
     static std::unique_ptr<Image<4>> readPPM(const std::string &path, const std::string &alphaPath);
 
-    static void writePGM(const std::string &path, const Image<3> &image);
+    static void writePPM(const std::string &path, const Image<3> &image);
 
-    static void writePGM(const std::string &path, const std::string &alphaPath, const Image<4> &image);
+    static void writePPM(const std::string &path, const std::string &alphaPath, const Image<4> &image);
 };
 
 
