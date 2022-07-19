@@ -4,6 +4,8 @@
 
 #include <wx/wx.h>
 #include <wx/numdlg.h>
+#include <wx/valnum.h>
+#include <wx/spinctrl.h>
 #include <memory>
 #include "Image.h"
 #include "PGMManager.h"
@@ -27,9 +29,16 @@ private:
 
     void OnSave(wxCommandEvent &event);
 
+    void OnSetPixel(wxCommandEvent &event);
+
+    void OnApplyKernel(wxCommandEvent &event);
+
+    void OnGetGrayscale(wxCommandEvent &event);
+
     void EnableImageOptions(bool enable = true);
 
     void PaintImage(wxPaintEvent &evt);
+
 
     wxMenu *fileMenu;
     wxMenu *imageMenu;
@@ -44,8 +53,8 @@ END_EVENT_TABLE()
 
 enum {
     ID_SET_PIXEL = 1,
-    ID_APPLY_KERNEL = 2,
-    ID_GET_GRAYSCALE = 3
+    ID_APPLY_KERNEL,
+    ID_GET_GRAYSCALE,
 };
 
 wxIMPLEMENT_APP(ImageProcessingApp);
@@ -86,6 +95,9 @@ ImageProcessingFrame::ImageProcessingFrame()
     Bind(wxEVT_MENU, &ImageProcessingFrame::OnOpen, this, wxID_OPEN);
     Bind(wxEVT_MENU, &ImageProcessingFrame::OnNew, this, wxID_NEW);
     Bind(wxEVT_MENU, &ImageProcessingFrame::OnSave, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &ImageProcessingFrame::OnSetPixel, this, ID_SET_PIXEL);
+    Bind(wxEVT_MENU, &ImageProcessingFrame::OnApplyKernel, this, ID_APPLY_KERNEL);
+    Bind(wxEVT_MENU, &ImageProcessingFrame::OnGetGrayscale, this, ID_GET_GRAYSCALE);
 }
 
 void ImageProcessingFrame::OnOpen(wxCommandEvent &event) {
@@ -115,9 +127,9 @@ void ImageProcessingFrame::OnOpen(wxCommandEvent &event) {
         } else if (imagePath.EndsWith(".ppm") && chosen == 1) {
             image = PPMManager::readPPM(imagePath.ToStdString(), alphaPath.ToStdString());
         }
-    } catch (PGMReadException &e) {
+    } catch (const PGMReadException &e) {
         wxMessageBox(e.what(), "Error", wxICON_ERROR);
-    } catch (PPMReadException &e) {
+    } catch (const PPMReadException &e) {
         wxMessageBox(e.what(), "Error", wxICON_ERROR);
     }
     EnableImageOptions(true);
@@ -187,6 +199,8 @@ void ImageProcessingFrame::EnableImageOptions(bool enable) {
     imageMenu->Enable(ID_SET_PIXEL, enable);
     imageMenu->Enable(ID_APPLY_KERNEL, enable);
     imageMenu->Enable(ID_GET_GRAYSCALE, enable);
+    if (image) SetStatusText("Image loaded. Width: " + std::to_string(image->getWidth()) + "px, Height: " +
+                             std::to_string(image->getHeight()) + "px");
 }
 
 void ImageProcessingFrame::PaintImage(wxPaintEvent &evt) {
@@ -228,4 +242,73 @@ void ImageProcessingFrame::PaintImage(wxPaintEvent &evt) {
         }
         dc.DrawBitmap(bitmap, 0, 0, false);
     }
+}
+
+void ImageProcessingFrame::OnSetPixel(wxCommandEvent &event) {
+    int channels;
+    if (auto i = std::dynamic_pointer_cast<Image<1>>(image); i) channels = 1;
+    else if (auto i = std::dynamic_pointer_cast<Image<2>>(image); i) channels = 2;
+    else if (auto i = std::dynamic_pointer_cast<Image<3>>(image); i) channels = 3;
+    else if (auto i = std::dynamic_pointer_cast<Image<4>>(image); i) channels = 4;
+    int x = wxGetNumberFromUser("Select X coordinate", "X", "Edit Image", 1, 1, 100000, this);
+    if (x == -1) return;
+    int y = wxGetNumberFromUser("Select Y coordinate", "Y", "Edit Image", 1, 1, 100000, this);
+    if (y == -1) return;
+    int c = wxGetNumberFromUser("Select channel", "Channels", "Edit Image", 1, 1, channels, this);
+    if (c == -1) return;
+    image->set(x, y, c, wxGetNumberFromUser("Set value", "value", "Edit Image", 0, 0, 256, this));
+}
+
+void ImageProcessingFrame::OnApplyKernel(wxCommandEvent &event) {
+    const wxString choices[] = {"Identity Kernel", "Edge Kernel 1", "Edge Kernel 2", "Edge Kernel 3", "Sharpen Kernel",
+                                "Gaussian Blur Kernel"};
+    int chosen = wxGetSingleChoiceIndex("Select kernel", "Apply kernel", 6, choices, 0);
+    switch (chosen) {
+        case 0:
+            image->applyKernel(IdentityKernel());
+            break;
+        case 1:
+            image->applyKernel(Edge0Kernel());
+            break;
+        case 2:
+            image->applyKernel(Edge1Kernel());
+            break;
+        case 3:
+            image->applyKernel(Edge2Kernel());
+            break;
+        case 4:
+            image->applyKernel(SharpenKernel());
+            break;
+        case 5:
+            float stdDev;
+            int dimension;
+            try {
+                stdDev = stof(wxGetTextFromUser("Insert kernel standard deviation", "Define Gauss Blur Kernel",
+                                                "1.00").ToStdString());
+            } catch (...) {
+                wxMessageBox("Cannot parse standard deviation", "Error", wxICON_ERROR);
+                return;
+            }
+            dimension = wxGetNumberFromUser("Insert kernel dimension", "Dimension", "Define Gauss Blur Kernel", 3, 1,
+                                            999999);
+            if (dimension == -1) return;
+            try {
+                GaussBlurKernel kernel(stdDev, dimension);
+                image->applyKernel(kernel);
+            } catch (const WrongSizeKernelException &e) {
+                wxMessageBox(e.what(), "Error while creating kernel", wxICON_ERROR);
+            }
+    }
+
+}
+
+void ImageProcessingFrame::OnGetGrayscale(wxCommandEvent &event) {
+    if (auto i = std::dynamic_pointer_cast<Image<2>>(image); i) {
+        image = i->getGrayScale();
+    } else if (auto i = std::dynamic_pointer_cast<Image<3>>(image); i) {
+        image = i->getGrayScale();
+    } else if (auto i = std::dynamic_pointer_cast<Image<4>>(image); i) {
+        image = i->getGrayScale();
+    }
+    wxWindow::Refresh();
 }

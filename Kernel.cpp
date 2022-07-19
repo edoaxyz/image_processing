@@ -31,6 +31,7 @@ float Kernel::getCenteredValue(int x, int y) const {
 }
 
 GaussBlurKernel::GaussBlurKernel(const float stdDev, int dimension) : Kernel(dimension) {
+    double sum = 0;
     for (int y = 0; y < dimension; y++) {
         for (int x = 0; x < dimension; x++) {
             int centeredX = x - (dimension / 2);
@@ -38,6 +39,14 @@ GaussBlurKernel::GaussBlurKernel(const float stdDev, int dimension) : Kernel(dim
             values[y * dimension + x] =
                     (1 / (2 * M_PI * pow(stdDev, 2))) *
                     exp(-(pow(centeredX, 2) + pow(centeredY, 2)) / (2 * pow(stdDev, 2)));
+            sum += values[y * dimension + x];
         }
     }
+
+    for (int y = 0; y < dimension; y++) {
+        for (int x = 0; x < dimension; x++) {
+            values[y * dimension + x] /= sum;
+        }
+    }
+
 }

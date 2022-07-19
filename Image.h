@@ -108,20 +108,22 @@ public:
     }
 
     virtual void applyKernel(const Kernel &kernel) {
+        Image<channels, T> copy(*this);
         for (int i = 0; i < channels; i++) {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     // convolute
                     double sum = 0;
-                    for (int kernelX = -kernel.getMatrixSize() / 2; kernelX < kernel.getMatrixSize() / 2; kernelX++) {
+                    for (int kernelX = -kernel.getMatrixSize() / 2; kernelX <= kernel.getMatrixSize() / 2; kernelX++) {
                         for (int kernelY = -kernel.getMatrixSize() / 2;
-                             kernelY < kernel.getMatrixSize() / 2; kernelY++) {
+                             kernelY <= kernel.getMatrixSize() / 2; kernelY++) {
                             try {
                                 sum += kernel.getCenteredValue(kernelX, kernelY) *
-                                       get(x - kernelX, y - kernelY, i);
-                            } catch (WrongArgumentsImageException &exception) {}
+                                       copy.get(x - kernelX, y - kernelY, i);
+                            } catch (const WrongArgumentsImageException &exception) {}
                         }
                     }
+
                     sum = std::min(std::max(sum, double(std::numeric_limits<T>::min())),
                                    double(std::numeric_limits<T>::max()));
                     set(x, y, i, sum);
