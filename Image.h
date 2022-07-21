@@ -159,4 +159,9 @@ private:
     }
 };
 
+typedef AbstractImage<> EightBitAbstractImage;
+typedef class Image<1> GImage;
+typedef class Image<2> GAImage;
+typedef class Image<3> RGBImage;
+typedef class Image<4> RGBAImage;
 #endif //IMAGE_PROCESSING_IMAGE_H

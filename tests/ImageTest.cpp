@@ -5,7 +5,7 @@
 #include "../Image.h"
 
 TEST(Image, TestCorrectInitialization) {
-    Image<1> image(300, 400, 1);
+    GImage image(300, 400, 1);
     for (int y = 0; y < image.getHeight(); y++) {
         for (int x = 0; x < image.getWidth(); x++) {
             ASSERT_EQ(1, image.get(x, y, 0));
@@ -14,7 +14,7 @@ TEST(Image, TestCorrectInitialization) {
 }
 
 TEST(Image, TestSet) {
-    Image<1> image(300, 400, 1);
+    GImage image(300, 400, 1);
     image.set(200, 200, 0, 20);
     ASSERT_EQ(20, image.get(200, 200, 0));
     for (int y = 0; y < image.getHeight(); y++) {
@@ -25,10 +25,10 @@ TEST(Image, TestSet) {
 }
 
 TEST(Image, TestClone) {
-    Image<1> image(300, 400, 1);
+    GImage image(300, 400, 1);
     image.set(200, 200, 0, 20);
 
-    Image<1> image2(image);
+    GImage image2(image);
     image.set(200, 200, 0, 30);
     ASSERT_EQ(20, image2.get(200, 200, 0));
     for (int y = 0; y < image2.getHeight(); y++) {
@@ -39,7 +39,7 @@ TEST(Image, TestClone) {
 }
 
 TEST(Image, TestValidation) {
-    Image<2> image(300, 400, 1);
+    GAImage image(300, 400, 1);
     EXPECT_NO_THROW({
                         image.set(200, 200, 0, 20);
                     });
@@ -58,7 +58,7 @@ TEST(Image, TestValidation) {
 }
 
 TEST(Image, TestGrayScale) {
-    Image<3> image(200, 400, 0);
+    RGBImage image(200, 400, 0);
     image.set(100, 200, 1, 255);
     image.set(100, 200, 2, 255);
 
@@ -72,7 +72,7 @@ TEST(Image, TestGrayScale) {
 }
 
 TEST(Image, TestChannelExtraction) {
-    Image<2> image(200, 200, 0);
+    GAImage image(200, 200, 0);
     image.set(100, 100, 0, 230);
 
     auto channel0 = image.extractChannel(0);
@@ -85,3 +85,12 @@ TEST(Image, TestChannelExtraction) {
         }
     }
 }
+
+extern template
+class Image<1>;
+
+extern template
+class Image<2>;
+
+extern template
+class Image<3>;

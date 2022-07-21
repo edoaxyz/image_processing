@@ -31,13 +31,13 @@ public:
 
 class PPMManager {
 public:
-    static std::unique_ptr<Image<3>> readPPM(const std::string &path);
+    static std::unique_ptr<RGBImage> readPPM(const std::string &path);
 
-    static std::unique_ptr<Image<4>> readPPM(const std::string &path, const std::string &alphaPath);
+    static std::unique_ptr<RGBAImage> readPPM(const std::string &path, const std::string &alphaPath);
 
-    static void writePPM(const std::string &path, const Image<3> &image);
+    static void writePPM(const std::string &path, const RGBImage &image);
 
-    static void writePPM(const std::string &path, const std::string &alphaPath, const Image<4> &image);
+    static void writePPM(const std::string &path, const std::string &alphaPath, const RGBAImage &image);
 };
 
 

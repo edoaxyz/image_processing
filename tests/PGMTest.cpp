@@ -31,7 +31,7 @@ TEST(PGMManager, TestReadImageWithAlpha) {
 }
 
 TEST(PGMManager, TestWriteMonocromeImage) {
-    Image<1> image(2, 3, 0);
+    GImage image(2, 3, 0);
     image.set(1, 2, 0, 128);
     PGMManager::writePGM("test.pgm", image);
     auto output = PGMManager::readPGM("test.pgm");
@@ -45,7 +45,7 @@ TEST(PGMManager, TestWriteMonocromeImage) {
 }
 
 TEST(PGMManager, TestWriteImageWithAlpha) {
-    Image<2> image(2, 3, 0);
+    GAImage image(2, 3, 0);
     image.set(1, 1, 0, 128);
     image.set(1, 2, 1, 128);
     PGMManager::writePGM("test.pgm", "test-alpha.pgm", image);

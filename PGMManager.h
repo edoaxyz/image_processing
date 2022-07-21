@@ -31,13 +31,13 @@ public:
 
 class PGMManager {
 public:
-    static std::unique_ptr<Image<1>> readPGM(const std::string &path);
+    static std::unique_ptr<GImage> readPGM(const std::string &path);
 
-    static std::unique_ptr<Image<2>> readPGM(const std::string &path, const std::string &alphaPath);
+    static std::unique_ptr<GAImage> readPGM(const std::string &path, const std::string &alphaPath);
 
-    static void writePGM(const std::string &path, const Image<1> &image);
+    static void writePGM(const std::string &path, const GImage &image);
 
-    static void writePGM(const std::string &path, const std::string &alphaPath, const Image<2> &image);
+    static void writePGM(const std::string &path, const std::string &alphaPath, const GAImage &image);
 };
 
 

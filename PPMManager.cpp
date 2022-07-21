@@ -7,7 +7,7 @@
 #include "PGMManager.h"
 #include "PXXManager.h"
 
-std::unique_ptr<Image<3>> PPMManager::readPPM(const std::string &path) {
+std::unique_ptr<RGBImage> PPMManager::readPPM(const std::string &path) {
     std::ifstream inputFile(path, std::ios::binary);
     if (!inputFile.is_open()) throw PPMReadException("Cannot open file " + path);
 
@@ -19,7 +19,7 @@ std::unique_ptr<Image<3>> PPMManager::readPPM(const std::string &path) {
         throw PPMReadException(
                 "Unsupported PPM MaxVal in " + path + ". MaxVal found: " + std::to_string(header.maxVal));
 
-    auto image = std::make_unique<Image<3>>(header.width, header.height);
+    auto image = std::make_unique<RGBImage>(header.width, header.height);
     for (int y = 0; y < image->getHeight(); y++) {
         for (int x = 0; x < image->getWidth(); x++) {
             for (int c = 0; c < 3; c++) {
@@ -33,13 +33,13 @@ std::unique_ptr<Image<3>> PPMManager::readPPM(const std::string &path) {
     return image;
 }
 
-std::unique_ptr<Image<4>> PPMManager::readPPM(const std::string &path, const std::string &alphaPath) {
+std::unique_ptr<RGBAImage> PPMManager::readPPM(const std::string &path, const std::string &alphaPath) {
     auto base = PPMManager::readPPM(path);
     auto alpha = PGMManager::readPGM(alphaPath);
     if (base->getWidth() != alpha->getWidth() || base->getHeight() != alpha->getHeight())
         throw PPMReadException("Grayscale and Alpha images have different dimensions");
 
-    auto final = std::make_unique<Image<4>>(base->getWidth(), base->getHeight());
+    auto final = std::make_unique<RGBAImage>(base->getWidth(), base->getHeight());
     for (int y = 0; y < final->getHeight(); y++) {
         for (int x = 0; x < final->getWidth(); x++) {
             final->set(x, y, 0, base->get(x, y, 0));
@@ -51,7 +51,7 @@ std::unique_ptr<Image<4>> PPMManager::readPPM(const std::string &path, const std
     return final;
 }
 
-void PPMManager::writePPM(const std::string &path, const Image<3> &image) {
+void PPMManager::writePPM(const std::string &path, const RGBImage &image) {
     std::ofstream outputFile(path);
     if (!outputFile.is_open()) throw PGMWriteException("Cannot open file " + path);
 
@@ -68,9 +68,9 @@ void PPMManager::writePPM(const std::string &path, const Image<3> &image) {
     outputFile.close();
 }
 
-void PPMManager::writePPM(const std::string &path, const std::string &alphaPath, const Image<4> &image) {
-    auto base = std::make_unique<Image<3>>(image.getWidth(), image.getHeight());
-    auto alpha = std::make_unique<Image<1>>(image.getWidth(), image.getHeight());
+void PPMManager::writePPM(const std::string &path, const std::string &alphaPath, const RGBAImage &image) {
+    auto base = std::make_unique<RGBImage>(image.getWidth(), image.getHeight());
+    auto alpha = std::make_unique<GImage>(image.getWidth(), image.getHeight());
     for (int y = 0; y < image.getHeight(); y++) {
         for (int x = 0; x < image.getWidth(); x++) {
             base->set(x, y, 0, image.get(x, y, 0));
@@ -83,4 +83,11 @@ void PPMManager::writePPM(const std::string &path, const std::string &alphaPath,
     PGMManager::writePGM(alphaPath, *alpha);
 }
 
+extern template
+class Image<1>;
 
+extern template
+class Image<3>;
+
+extern template
+class Image<4>;

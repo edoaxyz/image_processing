@@ -5,7 +5,6 @@
 #include <wx/wx.h>
 #include <wx/numdlg.h>
 #include <wx/valnum.h>
-#include <wx/spinctrl.h>
 #include <memory>
 #include "Image.h"
 #include "PGMManager.h"
@@ -43,7 +42,7 @@ private:
     wxMenu *fileMenu;
     wxMenu *imageMenu;
     wxPanel *imagePanel;
-    std::shared_ptr<AbstractImage<unsigned char>> image;
+    std::shared_ptr<EightBitAbstractImage> image;
 DECLARE_EVENT_TABLE()
 };
 
@@ -144,28 +143,28 @@ void ImageProcessingFrame::OnNew(wxCommandEvent &event) {
     if (channels == -1) return;
     switch (channels) {
         case 1:
-            image = std::make_unique<Image<1>>(width, height);
+            image = std::make_unique<GImage>(width, height);
             break;
         case 2:
-            image = std::make_unique<Image<2>>(width, height);
+            image = std::make_unique<GAImage>(width, height);
             break;
         case 3:
-            image = std::make_unique<Image<3>>(width, height);
+            image = std::make_unique<RGBImage>(width, height);
             break;
         case 4:
-            image = std::make_unique<Image<4>>(width, height);
+            image = std::make_unique<RGBAImage>(width, height);
     }
     EnableImageOptions();
 }
 
 void ImageProcessingFrame::OnSave(wxCommandEvent &event) {
-    if (auto i = std::dynamic_pointer_cast<Image<1>>(image); i) {
+    if (auto i = std::dynamic_pointer_cast<GImage>(image); i) {
         wxFileDialog
                 imageFileDialog(this, "Save PGM file", "", "",
                                 "PGM files (*.pgm)|*.pgm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (imageFileDialog.ShowModal() == wxID_CANCEL) return;
         PGMManager::writePGM(imageFileDialog.GetPath().ToStdString(), *i);
-    } else if (auto i = std::dynamic_pointer_cast<Image<2>>(image); i) {
+    } else if (auto i = std::dynamic_pointer_cast<GAImage>(image); i) {
         wxFileDialog
                 imageFileDialog(this, "Save PGM file", "", "",
                                 "PGM files (*.pgm)|*.pgm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
@@ -175,13 +174,13 @@ void ImageProcessingFrame::OnSave(wxCommandEvent &event) {
                                 "PGM files (*.pgm)|*.pgm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (alphaFileDialog.ShowModal() == wxID_CANCEL) return;
         PGMManager::writePGM(imageFileDialog.GetPath().ToStdString(), alphaFileDialog.GetPath().ToStdString(), *i);
-    } else if (auto i = std::dynamic_pointer_cast<Image<3>>(image); i) {
+    } else if (auto i = std::dynamic_pointer_cast<RGBImage>(image); i) {
         wxFileDialog
                 imageFileDialog(this, "Save PPM file", "", "",
                                 "PPM files (*.ppm)|*.ppm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (imageFileDialog.ShowModal() == wxID_CANCEL) return;
         PPMManager::writePPM(imageFileDialog.GetPath().ToStdString(), *i);
-    } else if (auto i = std::dynamic_pointer_cast<Image<4>>(image); i) {
+    } else if (auto i = std::dynamic_pointer_cast<RGBAImage>(image); i) {
         wxFileDialog
                 imageFileDialog(this, "Save PPM file", "", "",
                                 "PGM files (*.pgm)|*.pgm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
@@ -207,13 +206,13 @@ void ImageProcessingFrame::PaintImage(wxPaintEvent &evt) {
     wxPaintDC dc(this);
     if (image) {
         wxImage bitmap(image->getWidth(), image->getHeight());
-        if (auto i = std::dynamic_pointer_cast<Image<1>>(image); i) {
+        if (auto i = std::dynamic_pointer_cast<GImage>(image); i) {
             for (int y = 0; y < image->getHeight(); y++)
                 for (int x = 0; x < image->getWidth(); x++) {
                     unsigned char val = i->get(x, y, 0);
                     bitmap.SetRGB(x, y, val, val, val);
                 }
-        } else if (auto i = std::dynamic_pointer_cast<Image<2>>(image); i) {
+        } else if (auto i = std::dynamic_pointer_cast<GAImage>(image); i) {
             bitmap.InitAlpha();
             for (int y = 0; y < image->getHeight(); y++)
                 for (int x = 0; x < image->getWidth(); x++) {
@@ -221,7 +220,7 @@ void ImageProcessingFrame::PaintImage(wxPaintEvent &evt) {
                     bitmap.SetRGB(x, y, val, val, val);
                     bitmap.SetAlpha(x, y, i->get(x, y, 1));
                 }
-        } else if (auto i = std::dynamic_pointer_cast<Image<3>>(image); i) {
+        } else if (auto i = std::dynamic_pointer_cast<RGBImage>(image); i) {
             for (int y = 0; y < image->getHeight(); y++)
                 for (int x = 0; x < image->getWidth(); x++) {
                     unsigned char r = i->get(x, y, 0);
@@ -229,7 +228,7 @@ void ImageProcessingFrame::PaintImage(wxPaintEvent &evt) {
                     unsigned char b = i->get(x, y, 2);
                     bitmap.SetRGB(x, y, r, g, b);
                 }
-        } else if (auto i = std::dynamic_pointer_cast<Image<4>>(image); i) {
+        } else if (auto i = std::dynamic_pointer_cast<RGBAImage>(image); i) {
             bitmap.InitAlpha();
             for (int y = 0; y < image->getHeight(); y++)
                 for (int x = 0; x < image->getWidth(); x++) {
@@ -246,10 +245,10 @@ void ImageProcessingFrame::PaintImage(wxPaintEvent &evt) {
 
 void ImageProcessingFrame::OnSetPixel(wxCommandEvent &event) {
     int channels;
-    if (auto i = std::dynamic_pointer_cast<Image<1>>(image); i) channels = 1;
-    else if (auto i = std::dynamic_pointer_cast<Image<2>>(image); i) channels = 2;
-    else if (auto i = std::dynamic_pointer_cast<Image<3>>(image); i) channels = 3;
-    else if (auto i = std::dynamic_pointer_cast<Image<4>>(image); i) channels = 4;
+    if (auto i = std::dynamic_pointer_cast<GImage>(image); i) channels = 1;
+    else if (auto i = std::dynamic_pointer_cast<GAImage>(image); i) channels = 2;
+    else if (auto i = std::dynamic_pointer_cast<RGBImage>(image); i) channels = 3;
+    else if (auto i = std::dynamic_pointer_cast<RGBAImage>(image); i) channels = 4;
     int x = wxGetNumberFromUser("Select X coordinate", "X", "Edit Image", 1, 1, 100000, this);
     if (x == -1) return;
     int y = wxGetNumberFromUser("Select Y coordinate", "Y", "Edit Image", 1, 1, 100000, this);
@@ -303,11 +302,11 @@ void ImageProcessingFrame::OnApplyKernel(wxCommandEvent &event) {
 }
 
 void ImageProcessingFrame::OnGetGrayscale(wxCommandEvent &event) {
-    if (auto i = std::dynamic_pointer_cast<Image<2>>(image); i) {
+    if (auto i = std::dynamic_pointer_cast<GAImage>(image); i) {
         image = i->getGrayScale();
-    } else if (auto i = std::dynamic_pointer_cast<Image<3>>(image); i) {
+    } else if (auto i = std::dynamic_pointer_cast<RGBImage>(image); i) {
         image = i->getGrayScale();
-    } else if (auto i = std::dynamic_pointer_cast<Image<4>>(image); i) {
+    } else if (auto i = std::dynamic_pointer_cast<RGBAImage>(image); i) {
         image = i->getGrayScale();
     }
     wxWindow::Refresh();

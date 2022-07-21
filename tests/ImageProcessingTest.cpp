@@ -6,9 +6,12 @@
 #include "../Image.h"
 
 TEST(Image, TestIdentityKernel) {
-    Image<4> image(200, 200);
+    RGBAImage image(200, 200);
     image.set(100, 100, 3, 255);
     IdentityKernel identityKernel;
     image.applyKernel(identityKernel);
     ASSERT_EQ(255, image.get(100, 100, 3));
 }
+
+extern template
+class Image<4>;

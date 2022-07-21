@@ -8,7 +8,7 @@
 #include "PGMManager.h"
 #include "PXXManager.h"
 
-std::unique_ptr<Image<1>> PGMManager::readPGM(const std::string &path) {
+std::unique_ptr<GImage> PGMManager::readPGM(const std::string &path) {
     std::ifstream inputFile(path, std::ios::binary);
     if (!inputFile.is_open()) throw PGMReadException("Cannot open file " + path);
 
@@ -21,7 +21,7 @@ std::unique_ptr<Image<1>> PGMManager::readPGM(const std::string &path) {
         throw PGMReadException(
                 "Unsupported PGM MaxVal in " + path + ". MaxVal found: " + std::to_string(header.maxVal));
 
-    auto image = std::make_unique<Image<1>>(header.width, header.height);
+    auto image = std::make_unique<GImage>(header.width, header.height);
     for (int y = 0; y < image->getHeight(); y++) {
         for (int x = 0; x < image->getWidth(); x++) {
             unsigned char val;
@@ -33,14 +33,14 @@ std::unique_ptr<Image<1>> PGMManager::readPGM(const std::string &path) {
     return image;
 }
 
-std::unique_ptr<Image<2>> PGMManager::readPGM(const std::string &path, const std::string &alphaPath) {
+std::unique_ptr<GAImage> PGMManager::readPGM(const std::string &path, const std::string &alphaPath) {
     auto baseImage = PGMManager::readPGM(path);
     auto alphaImage = PGMManager::readPGM(alphaPath);
 
     if (baseImage->getWidth() != alphaImage->getWidth() || baseImage->getHeight() != alphaImage->getHeight())
         throw PGMReadException("Grayscale and Alpha images have different dimensions");
 
-    auto returnImage = std::make_unique<Image<2>>(baseImage->getWidth(), baseImage->getHeight());
+    auto returnImage = std::make_unique<GAImage>(baseImage->getWidth(), baseImage->getHeight());
     for (int y = 0; y < returnImage->getHeight(); y++) {
         for (int x = 0; x < returnImage->getWidth(); x++) {
             returnImage->set(x, y, 0, baseImage->get(x, y, 0));
@@ -50,7 +50,7 @@ std::unique_ptr<Image<2>> PGMManager::readPGM(const std::string &path, const std
     return returnImage;
 }
 
-void PGMManager::writePGM(const std::string &path, const Image<1> &image) {
+void PGMManager::writePGM(const std::string &path, const GImage &image) {
     std::ofstream outputFile(path, std::ios::binary);
     if (!outputFile.is_open()) throw PGMWriteException("Cannot open file " + path);
 
@@ -65,10 +65,15 @@ void PGMManager::writePGM(const std::string &path, const Image<1> &image) {
     outputFile.close();
 }
 
-void PGMManager::writePGM(const std::string &path, const std::string &alphaPath, const Image<2> &image) {
-    std::unique_ptr<Image<1>> baseImage = image.extractChannel(0);
+void PGMManager::writePGM(const std::string &path, const std::string &alphaPath, const GAImage &image) {
+    std::unique_ptr<GImage> baseImage = image.extractChannel(0);
     PGMManager::writePGM(path, *baseImage);
-    std::unique_ptr<Image<1>> alphaImage = image.extractChannel(1);
+    std::unique_ptr<GImage> alphaImage = image.extractChannel(1);
     PGMManager::writePGM(alphaPath, *alphaImage);
 }
 
+extern template
+class Image<1>;
+
+extern template
+class Image<2>;

@@ -59,7 +59,7 @@ TEST(PPMManager, TestReadImageWithAlpha) {
 }
 
 TEST(PPMManager, TestWriteImage) {
-    Image<3> image(2, 3, 0);
+    RGBImage image(2, 3, 0);
     image.set(1, 2, 2, 128);
     PPMManager::writePPM("test.ppm", image);
     auto output = PPMManager::readPPM("test.ppm");
@@ -73,7 +73,7 @@ TEST(PPMManager, TestWriteImage) {
 }
 
 TEST(PPMManager, TestWriteImageWithAlpha) {
-    Image<4> image(2, 3, 0);
+    RGBAImage image(2, 3, 0);
     image.set(1, 2, 2, 128);
     image.set(0, 2, 3, 128);
     PPMManager::writePPM("test.ppm", "test-alpha.pgm", image);
