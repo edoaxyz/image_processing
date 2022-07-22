@@ -118,17 +118,17 @@ void ImageProcessingFrame::OnOpen(wxCommandEvent &event) {
     }
     try {
         if (imagePath.EndsWith(".pgm") && chosen == 0) {
-            image = PGMManager::readPGM(imagePath.ToStdString());
+            image = PXXManager::readPGM(imagePath.ToStdString());
         } else if (imagePath.EndsWith(".pgm") && chosen == 1) {
-            image = PGMManager::readPGM(imagePath.ToStdString(), alphaPath.ToStdString());
+            image = PXXManager::readPGM(imagePath.ToStdString(), alphaPath.ToStdString());
         } else if (imagePath.EndsWith(".ppm") && chosen == 0) {
-            image = PPMManager::readPPM(imagePath.ToStdString());
+            image = PXXManager::readPPM(imagePath.ToStdString());
         } else if (imagePath.EndsWith(".ppm") && chosen == 1) {
-            image = PPMManager::readPPM(imagePath.ToStdString(), alphaPath.ToStdString());
+            image = PXXManager::readPPM(imagePath.ToStdString(), alphaPath.ToStdString());
         }
-    } catch (const PGMReadException &e) {
+    } catch (const PXXManager::PGMReadException &e) {
         wxMessageBox(e.what(), "Error", wxICON_ERROR);
-    } catch (const PPMReadException &e) {
+    } catch (const PXXManager::PPMReadException &e) {
         wxMessageBox(e.what(), "Error", wxICON_ERROR);
     }
     EnableImageOptions(true);
@@ -163,7 +163,7 @@ void ImageProcessingFrame::OnSave(wxCommandEvent &event) {
                 imageFileDialog(this, "Save PGM file", "", "",
                                 "PGM files (*.pgm)|*.pgm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (imageFileDialog.ShowModal() == wxID_CANCEL) return;
-        PGMManager::writePGM(imageFileDialog.GetPath().ToStdString(), *i);
+        PXXManager::writePGM(imageFileDialog.GetPath().ToStdString(), *i);
     } else if (auto i = std::dynamic_pointer_cast<GAImage>(image); i) {
         wxFileDialog
                 imageFileDialog(this, "Save PGM file", "", "",
@@ -173,13 +173,13 @@ void ImageProcessingFrame::OnSave(wxCommandEvent &event) {
                 alphaFileDialog(this, "Save PGM alpha file", "", "",
                                 "PGM files (*.pgm)|*.pgm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (alphaFileDialog.ShowModal() == wxID_CANCEL) return;
-        PGMManager::writePGM(imageFileDialog.GetPath().ToStdString(), alphaFileDialog.GetPath().ToStdString(), *i);
+        PXXManager::writePGM(imageFileDialog.GetPath().ToStdString(), alphaFileDialog.GetPath().ToStdString(), *i);
     } else if (auto i = std::dynamic_pointer_cast<RGBImage>(image); i) {
         wxFileDialog
                 imageFileDialog(this, "Save PPM file", "", "",
                                 "PPM files (*.ppm)|*.ppm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (imageFileDialog.ShowModal() == wxID_CANCEL) return;
-        PPMManager::writePPM(imageFileDialog.GetPath().ToStdString(), *i);
+        PXXManager::writePPM(imageFileDialog.GetPath().ToStdString(), *i);
     } else if (auto i = std::dynamic_pointer_cast<RGBAImage>(image); i) {
         wxFileDialog
                 imageFileDialog(this, "Save PPM file", "", "",
@@ -189,7 +189,7 @@ void ImageProcessingFrame::OnSave(wxCommandEvent &event) {
                 alphaFileDialog(this, "Save PGM alpha file", "", "",
                                 "PGM files (*.pgm)|*.pgm", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (alphaFileDialog.ShowModal() == wxID_CANCEL) return;
-        PPMManager::writePPM(imageFileDialog.GetPath().ToStdString(), alphaFileDialog.GetPath().ToStdString(), *i);
+        PXXManager::writePPM(imageFileDialog.GetPath().ToStdString(), alphaFileDialog.GetPath().ToStdString(), *i);
     }
 }
 

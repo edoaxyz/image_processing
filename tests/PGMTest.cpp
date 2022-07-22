@@ -5,7 +5,7 @@
 #include "../PGMManager.h"
 
 TEST(PGMManager, TestReadMonocromeImage) {
-    auto image = PGMManager::readPGM("assets/pgm/test.pgm");
+    auto image = PXXManager::readPGM("assets/pgm/test.pgm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(216, image->get(0, 1, 0));
     ASSERT_EQ(145, image->get(1, 0, 0));
@@ -15,7 +15,7 @@ TEST(PGMManager, TestReadMonocromeImage) {
 }
 
 TEST(PGMManager, TestReadImageWithAlpha) {
-    auto image = PGMManager::readPGM("assets/pgm/test.pgm", "assets/pgm/test-alpha.pgm");
+    auto image = PXXManager::readPGM("assets/pgm/test.pgm", "assets/pgm/test-alpha.pgm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(216, image->get(0, 1, 0));
     ASSERT_EQ(145, image->get(1, 0, 0));
@@ -33,8 +33,8 @@ TEST(PGMManager, TestReadImageWithAlpha) {
 TEST(PGMManager, TestWriteMonocromeImage) {
     GImage image(2, 3, 0);
     image.set(1, 2, 0, 128);
-    PGMManager::writePGM("test.pgm", image);
-    auto output = PGMManager::readPGM("test.pgm");
+    PXXManager::writePGM("test.pgm", image);
+    auto output = PXXManager::readPGM("test.pgm");
     ASSERT_EQ(image.getWidth(), output->getWidth());
     ASSERT_EQ(image.getHeight(), output->getHeight());
     for (int y = 0; y < output->getHeight(); y++) {
@@ -48,8 +48,8 @@ TEST(PGMManager, TestWriteImageWithAlpha) {
     GAImage image(2, 3, 0);
     image.set(1, 1, 0, 128);
     image.set(1, 2, 1, 128);
-    PGMManager::writePGM("test.pgm", "test-alpha.pgm", image);
-    auto output = PGMManager::readPGM("test.pgm", "test-alpha.pgm");
+    PXXManager::writePGM("test.pgm", "test-alpha.pgm", image);
+    auto output = PXXManager::readPGM("test.pgm", "test-alpha.pgm");
     ASSERT_EQ(image.getWidth(), output->getWidth());
     ASSERT_EQ(image.getHeight(), output->getHeight());
     for (int y = 0; y < output->getHeight(); y++) {
@@ -62,47 +62,47 @@ TEST(PGMManager, TestWriteImageWithAlpha) {
 
 TEST(PGMManager, TestFake) {
     ASSERT_ANY_THROW({
-                         PGMManager::readPGM("assets/pgm/fake.pgm");
+                         PXXManager::readPGM("assets/pgm/fake.pgm");
                      });
 }
 
 TEST(PGMManager, TestUnsupportedMagic) {
     ASSERT_THROW({
                      try {
-                         PGMManager::readPGM("assets/pgm/unsupported-magic.pgm");
+                         PXXManager::readPGM("assets/pgm/unsupported-magic.pgm");
                      }
-                     catch (const PGMReadException &e) {
+                     catch (const PXXManager::PGMReadException &e) {
                          EXPECT_STREQ(
                                  "Cannot match magic number in assets/pgm/unsupported-magic.pgm. Magic number found: P2",
                                  e.what());
                          throw;
                      }
-                 }, PGMReadException);
+                 }, PXXManager::PGMReadException);
 }
 
 TEST(PGMManager, TestUnsupportedMaxVal) {
     ASSERT_THROW({
                      try {
-                         PGMManager::readPGM("assets/pgm/unsupported-maxval.pgm");
+                         PXXManager::readPGM("assets/pgm/unsupported-maxval.pgm");
                      }
-                     catch (const PGMReadException &e) {
+                     catch (const PXXManager::PGMReadException &e) {
                          EXPECT_STREQ(
                                  "Unsupported PGM MaxVal in assets/pgm/unsupported-maxval.pgm. MaxVal found: 65535",
                                  e.what());
                          throw;
                      }
-                 }, PGMReadException);
+                 }, PXXManager::PGMReadException);
 }
 
 TEST(PGMManager, TestAlphaImageDifferentDimensions) {
     ASSERT_THROW({
                      try {
-                         PGMManager::readPGM("assets/pgm/test.pgm", "assets/pgm/test-wrong-size-alpha.pgm");
+                         PXXManager::readPGM("assets/pgm/test.pgm", "assets/pgm/test-wrong-size-alpha.pgm");
                      }
-                     catch (const PGMReadException &e) {
+                     catch (const PXXManager::PGMReadException &e) {
                          EXPECT_STREQ("Grayscale and Alpha images have different dimensions", e.what());
                          throw;
                      }
 
-                 }, PGMReadException);
+                 }, PXXManager::PGMReadException);
 }

@@ -9,7 +9,7 @@
 #include "../PPMManager.h"
 
 TEST(PPMManager, TestReadImage) {
-    auto image = PPMManager::readPPM("assets/ppm/test.ppm");
+    auto image = PXXManager::readPPM("assets/ppm/test.ppm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(255, image->get(0, 0, 1));
     ASSERT_EQ(255, image->get(0, 0, 2));
@@ -31,7 +31,7 @@ TEST(PPMManager, TestReadImage) {
 }
 
 TEST(PPMManager, TestReadImageWithAlpha) {
-    auto image = PPMManager::readPPM("assets/ppm/test.ppm", "assets/ppm/test-alpha.pgm");
+    auto image = PXXManager::readPPM("assets/ppm/test.ppm", "assets/ppm/test-alpha.pgm");
     ASSERT_EQ(255, image->get(0, 0, 0));
     ASSERT_EQ(255, image->get(0, 0, 1));
     ASSERT_EQ(255, image->get(0, 0, 2));
@@ -61,8 +61,8 @@ TEST(PPMManager, TestReadImageWithAlpha) {
 TEST(PPMManager, TestWriteImage) {
     RGBImage image(2, 3, 0);
     image.set(1, 2, 2, 128);
-    PPMManager::writePPM("test.ppm", image);
-    auto output = PPMManager::readPPM("test.ppm");
+    PXXManager::writePPM("test.ppm", image);
+    auto output = PXXManager::readPPM("test.ppm");
     ASSERT_EQ(image.getWidth(), output->getWidth());
     ASSERT_EQ(image.getHeight(), output->getHeight());
     for (int y = 0; y < output->getHeight(); y++) {
@@ -76,8 +76,8 @@ TEST(PPMManager, TestWriteImageWithAlpha) {
     RGBAImage image(2, 3, 0);
     image.set(1, 2, 2, 128);
     image.set(0, 2, 3, 128);
-    PPMManager::writePPM("test.ppm", "test-alpha.pgm", image);
-    auto output = PPMManager::readPPM("test.ppm", "test-alpha.pgm");
+    PXXManager::writePPM("test.ppm", "test-alpha.pgm", image);
+    auto output = PXXManager::readPPM("test.ppm", "test-alpha.pgm");
     ASSERT_EQ(image.getWidth(), output->getWidth());
     ASSERT_EQ(image.getHeight(), output->getHeight());
     for (int y = 0; y < output->getHeight(); y++) {
@@ -91,48 +91,48 @@ TEST(PPMManager, TestWriteImageWithAlpha) {
 
 TEST(PPMManager, TestFake) {
     ASSERT_ANY_THROW({
-                         PPMManager::readPPM("assets/ppm/fake.ppm");
+                         PXXManager::readPPM("assets/ppm/fake.ppm");
                      });
 }
 
 TEST(PPMManager, TestUnsupportedMagic) {
     ASSERT_THROW({
                      try {
-                         PPMManager::readPPM("assets/ppm/unsupported-magic.ppm");
+                         PXXManager::readPPM("assets/ppm/unsupported-magic.ppm");
                      }
-                     catch (const PPMReadException &e) {
+                     catch (const PXXManager::PPMReadException &e) {
                          EXPECT_STREQ(
                                  "Cannot match magic number in assets/ppm/unsupported-magic.ppm. Magic number found: P3",
                                  e.what());
                          throw;
                      }
-                 }, PPMReadException);
+                 }, PXXManager::PPMReadException);
 }
 
 TEST(PPMManager, TestUnsupportedMaxVal) {
     ASSERT_THROW({
                      try {
-                         PPMManager::readPPM("../../tests/assets/ppm/unsupported-maxval.ppm");
+                         PXXManager::readPPM("../../tests/assets/ppm/unsupported-maxval.ppm");
                      }
-                     catch (const PPMReadException &e) {
+                     catch (const PXXManager::PPMReadException &e) {
                          EXPECT_STREQ(
                                  "Unsupported PPM MaxVal in ../../tests/assets/ppm/unsupported-maxval.ppm. MaxVal found: 65535",
                                  e.what());
                          throw;
                      }
-                 }, PPMReadException);
+                 }, PXXManager::PPMReadException);
 }
 
 TEST(PPMManager, TestAlphaImageDifferentDimensions) {
     ASSERT_THROW({
                      try {
-                         PPMManager::readPPM("../../tests/assets/ppm/test.ppm",
+                         PXXManager::readPPM("../../tests/assets/ppm/test.ppm",
                                              "../../tests/assets/ppm/test-wrong-size-alpha.pgm");
                      }
-                     catch (const PPMReadException &e) {
+                     catch (const PXXManager::PPMReadException &e) {
                          EXPECT_STREQ("Grayscale and Alpha images have different dimensions", e.what());
                          throw;
                      }
 
-                 }, PPMReadException);
+                 }, PXXManager::PPMReadException);
 }

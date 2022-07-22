@@ -8,7 +8,7 @@
 #include "PGMManager.h"
 #include "PXXManager.h"
 
-std::unique_ptr<GImage> PGMManager::readPGM(const std::string &path) {
+std::unique_ptr<GImage> PXXManager::readPGM(const std::string &path) {
     std::ifstream inputFile(path, std::ios::binary);
     if (!inputFile.is_open()) throw PGMReadException("Cannot open file " + path);
 
@@ -33,9 +33,9 @@ std::unique_ptr<GImage> PGMManager::readPGM(const std::string &path) {
     return image;
 }
 
-std::unique_ptr<GAImage> PGMManager::readPGM(const std::string &path, const std::string &alphaPath) {
-    auto baseImage = PGMManager::readPGM(path);
-    auto alphaImage = PGMManager::readPGM(alphaPath);
+std::unique_ptr<GAImage> PXXManager::readPGM(const std::string &path, const std::string &alphaPath) {
+    auto baseImage = PXXManager::readPGM(path);
+    auto alphaImage = PXXManager::readPGM(alphaPath);
 
     if (baseImage->getWidth() != alphaImage->getWidth() || baseImage->getHeight() != alphaImage->getHeight())
         throw PGMReadException("Grayscale and Alpha images have different dimensions");
@@ -50,7 +50,7 @@ std::unique_ptr<GAImage> PGMManager::readPGM(const std::string &path, const std:
     return returnImage;
 }
 
-void PGMManager::writePGM(const std::string &path, const GImage &image) {
+void PXXManager::writePGM(const std::string &path, const GImage &image) {
     std::ofstream outputFile(path, std::ios::binary);
     if (!outputFile.is_open()) throw PGMWriteException("Cannot open file " + path);
 
@@ -65,11 +65,11 @@ void PGMManager::writePGM(const std::string &path, const GImage &image) {
     outputFile.close();
 }
 
-void PGMManager::writePGM(const std::string &path, const std::string &alphaPath, const GAImage &image) {
+void PXXManager::writePGM(const std::string &path, const std::string &alphaPath, const GAImage &image) {
     std::unique_ptr<GImage> baseImage = image.extractChannel(0);
-    PGMManager::writePGM(path, *baseImage);
+    PXXManager::writePGM(path, *baseImage);
     std::unique_ptr<GImage> alphaImage = image.extractChannel(1);
-    PGMManager::writePGM(alphaPath, *alphaImage);
+    PXXManager::writePGM(alphaPath, *alphaImage);
 }
 
 extern template

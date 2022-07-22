@@ -8,37 +8,36 @@
 #include <memory>
 #include "Image.h"
 
-class PPMException {
-public:
-    PPMException() = default;
+namespace PXXManager {
+    class PPMException {
+    public:
+        PPMException() = default;
 
-    virtual ~PPMException() = default;
-};
+        virtual ~PPMException() = default;
+    };
 
-class PPMReadException : public PPMException, public std::runtime_error {
-public:
-    PPMReadException(std::string msg) : std::runtime_error(msg) {};
+    class PPMReadException : public PPMException, public std::runtime_error {
+    public:
+        PPMReadException(std::string msg) : std::runtime_error(msg) {};
 
-    ~PPMReadException() override = default;
-};
+        ~PPMReadException() override = default;
+    };
 
-class PPMWriteException : public PPMException, public std::runtime_error {
-public:
-    PPMWriteException(std::string msg) : std::runtime_error(msg) {};
+    class PPMWriteException : public PPMException, public std::runtime_error {
+    public:
+        PPMWriteException(std::string msg) : std::runtime_error(msg) {};
 
-    ~PPMWriteException() override = default;
-};
+        ~PPMWriteException() override = default;
+    };
 
-class PPMManager {
-public:
-    static std::unique_ptr<RGBImage> readPPM(const std::string &path);
+    std::unique_ptr<RGBImage> readPPM(const std::string &path);
 
-    static std::unique_ptr<RGBAImage> readPPM(const std::string &path, const std::string &alphaPath);
+    std::unique_ptr<RGBAImage> readPPM(const std::string &path, const std::string &alphaPath);
 
-    static void writePPM(const std::string &path, const RGBImage &image);
+    void writePPM(const std::string &path, const RGBImage &image);
 
-    static void writePPM(const std::string &path, const std::string &alphaPath, const RGBAImage &image);
-};
+    void writePPM(const std::string &path, const std::string &alphaPath, const RGBAImage &image);
+}
 
 
 #endif //IMAGE_PROCESSING_PPMMANAGER_H

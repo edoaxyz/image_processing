@@ -7,7 +7,7 @@
 #include "PGMManager.h"
 #include "PXXManager.h"
 
-std::unique_ptr<RGBImage> PPMManager::readPPM(const std::string &path) {
+std::unique_ptr<RGBImage> PXXManager::readPPM(const std::string &path) {
     std::ifstream inputFile(path, std::ios::binary);
     if (!inputFile.is_open()) throw PPMReadException("Cannot open file " + path);
 
@@ -33,9 +33,9 @@ std::unique_ptr<RGBImage> PPMManager::readPPM(const std::string &path) {
     return image;
 }
 
-std::unique_ptr<RGBAImage> PPMManager::readPPM(const std::string &path, const std::string &alphaPath) {
-    auto base = PPMManager::readPPM(path);
-    auto alpha = PGMManager::readPGM(alphaPath);
+std::unique_ptr<RGBAImage> PXXManager::readPPM(const std::string &path, const std::string &alphaPath) {
+    auto base = PXXManager::readPPM(path);
+    auto alpha = PXXManager::readPGM(alphaPath);
     if (base->getWidth() != alpha->getWidth() || base->getHeight() != alpha->getHeight())
         throw PPMReadException("Grayscale and Alpha images have different dimensions");
 
@@ -51,7 +51,7 @@ std::unique_ptr<RGBAImage> PPMManager::readPPM(const std::string &path, const st
     return final;
 }
 
-void PPMManager::writePPM(const std::string &path, const RGBImage &image) {
+void PXXManager::writePPM(const std::string &path, const RGBImage &image) {
     std::ofstream outputFile(path);
     if (!outputFile.is_open()) throw PGMWriteException("Cannot open file " + path);
 
@@ -68,7 +68,7 @@ void PPMManager::writePPM(const std::string &path, const RGBImage &image) {
     outputFile.close();
 }
 
-void PPMManager::writePPM(const std::string &path, const std::string &alphaPath, const RGBAImage &image) {
+void PXXManager::writePPM(const std::string &path, const std::string &alphaPath, const RGBAImage &image) {
     auto base = std::make_unique<RGBImage>(image.getWidth(), image.getHeight());
     auto alpha = std::make_unique<GImage>(image.getWidth(), image.getHeight());
     for (int y = 0; y < image.getHeight(); y++) {
@@ -79,8 +79,8 @@ void PPMManager::writePPM(const std::string &path, const std::string &alphaPath,
             alpha->set(x, y, 0, image.get(x, y, 3));
         }
     }
-    PPMManager::writePPM(path, *base);
-    PGMManager::writePGM(alphaPath, *alpha);
+    PXXManager::writePPM(path, *base);
+    PXXManager::writePGM(alphaPath, *alpha);
 }
 
 extern template
