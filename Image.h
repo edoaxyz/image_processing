@@ -117,10 +117,9 @@ public:
                     for (int kernelX = -kernel.getMatrixSize() / 2; kernelX <= kernel.getMatrixSize() / 2; kernelX++) {
                         for (int kernelY = -kernel.getMatrixSize() / 2;
                              kernelY <= kernel.getMatrixSize() / 2; kernelY++) {
-                            try {
-                                sum += kernel.getCenteredValue(kernelX, kernelY) *
-                                       copy.get(x - kernelX, y - kernelY, i);
-                            } catch (const WrongArgumentsImageException &exception) {}
+                            sum += kernel.getCenteredValue(kernelX, kernelY) *
+                                   double(copy.get(std::min(int(std::max(x + kernelX, 0)), int(width - 1)),
+                                                   std::min(int(std::max(y + kernelY, 0)), int(height - 1)), i));
                         }
                     }
 

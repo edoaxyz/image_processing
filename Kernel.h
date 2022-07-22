@@ -72,7 +72,7 @@ class Edge2Kernel : public Kernel {
 public:
     Edge2Kernel() : Kernel{-1, -1, -1,
                            -1, 8, -1,
-                           -1, 1, -1} {};
+                           -1, -1, -1} {};
 
     virtual ~Edge2Kernel() {};
 };
