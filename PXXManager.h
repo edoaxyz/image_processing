@@ -7,6 +7,8 @@
 
 #include <istream>
 
+namespace PXXManager
+// TODO: static functions
 class PXXReader {
 public:
     static void getLine(std::istream &inputStream, std::string &line) {

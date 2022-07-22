@@ -30,7 +30,7 @@ float Kernel::getCenteredValue(int x, int y) const {
     return getValue(x + (matrixSize / 2), y + (matrixSize / 2));
 }
 
-GaussBlurKernel::GaussBlurKernel(const float stdDev, int dimension) : Kernel(dimension) {
+GaussBlurKernel::GaussBlurKernel(float stdDev, int dimension) : Kernel(dimension) {
     double sum = 0;
     for (int y = 0; y < dimension; y++) {
         for (int x = 0; x < dimension; x++) {

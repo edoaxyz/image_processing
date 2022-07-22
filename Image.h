@@ -30,9 +30,9 @@ public:
 template<typename T = unsigned char>
 class AbstractImage {
 public:
-    virtual void set(const unsigned int x, const unsigned int y, const unsigned int channel, const T value) = 0;
+    virtual void set(unsigned int x, unsigned int y, unsigned int channel, T value) = 0;
 
-    virtual const T get(const unsigned int x, const unsigned int y, const unsigned int channel) const = 0;
+    virtual T get(unsigned int x, unsigned int y, unsigned int channel) const = 0;
 
     virtual unsigned int getWidth() const = 0;
 
@@ -44,8 +44,8 @@ public:
 template<int channels, typename T = unsigned char>
 class Image : public AbstractImage<T> {
 public:
-    Image<channels, T>(const unsigned int width, const unsigned int height, T initValue = 0) : width(width),
-                                                                                               height(height) {
+    Image<channels, T>(unsigned int width, unsigned int height, T initValue = 0) : width(width),
+                                                                                   height(height) {
         data = std::make_unique<T[]>(width * height * channels);
         for (int i = 0; i < width * height * channels; i++)
             data[i] = initValue;
@@ -63,12 +63,12 @@ public:
         return *this;
     }
 
-    virtual void set(const unsigned int x, const unsigned int y, const unsigned int channel, const T value) {
+    virtual void set(unsigned int x, unsigned int y, unsigned int channel, T value) {
         validateArguments(x, y, channel);
         data[y * width + x + getChannelOffset(channel)] = value;
     }
 
-    virtual const T get(const unsigned int x, const unsigned int y, const unsigned int channel) const {
+    virtual T get(unsigned int x, unsigned int y, unsigned int channel) const {
         validateArguments(x, y, channel);
         return data[y * width + x + getChannelOffset(channel)];
     }
@@ -138,8 +138,7 @@ protected:
 
     std::unique_ptr<T[]> data;
 private:
-    virtual void
-    validateArguments(const unsigned int x = 0, const unsigned int y = 0, const unsigned int channel = 0) const {
+    virtual void validateArguments(unsigned int x = 0, unsigned int y = 0, unsigned int channel = 0) const {
         if (channel >= channels || channel < 0)
             throw WrongArgumentsImageException("Passed wrong channel parameter: passed " + std::to_string(channel) +
                                                ", expected value >= 0 and < " + std::to_string(channels));

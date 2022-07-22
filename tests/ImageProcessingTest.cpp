@@ -13,5 +13,7 @@ TEST(Image, TestIdentityKernel) {
     ASSERT_EQ(255, image.get(100, 100, 3));
 }
 
+// TODO: add other test
+
 extern template
 class Image<4>;
