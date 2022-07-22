@@ -6,7 +6,7 @@
 #include "../Image.h"
 #include "../PPMManager.h"
 
-/*TEST(Image, TestIdentityKernel) {
+TEST(Image, TestIdentityKernel) {
     RGBAImage image(200, 200);
     image.set(100, 100, 3, 255);
     IdentityKernel identityKernel;
@@ -36,7 +36,7 @@ TEST(Image, TestEdge1Kernel) {
         for (int y = 0; y < edge1->getHeight(); y++)
             for (int c = 0; c < 3; c++)
                 ASSERT_EQ(original->get(x, y, c), edge1->get(x, y, c));
-}*/
+}
 
 TEST(Image, TestEdge2Kernel) {
     Edge2Kernel edge2Kernel;
@@ -77,3 +77,6 @@ TEST(Image, TestGaussBlurKernel) {
 
 extern template
 class Image<4>;
+
+extern template
+class Image<3>;
